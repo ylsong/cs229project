@@ -65,12 +65,22 @@ void Genotype::resolve(Haplotype * ht, Haploset * hs) {
 }
 
 void Genotype::print() {
-    if (resolved_by[0] == NULL) {
-        cout << geno << "  :  NOT RESOLVED" << endl; 
+    if (!output_flag) {
+        if (resolved_by[0] == NULL) {
+            cout << geno << "  :  NOT RESOLVED" << endl;
+        } else {
+            cout << geno << "  :  " << resolved_by[0]->get_haplo()
+            << "+" << resolved_by[1]->get_haplo() << endl;
+        }
     } else {
-        cout << geno << "  :  " << resolved_by[0]->get_haplo()
-         << "+" << resolved_by[1]->get_haplo() << endl;
+        if (resolved_by[0] == NULL) {
+            output_stream << geno << "  :  NOT RESOLVED" << endl;
+        } else {
+            output_stream << geno << "  :  " << resolved_by[0]->get_haplo()
+            << "+" << resolved_by[1]->get_haplo() << endl;
+        }
     }
+    
     
 }
 

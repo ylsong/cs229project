@@ -31,10 +31,19 @@ size_t Haploset::get_haplos_len() {
 }
 
 void Haploset::print() {
-    cout << "Resolvation Results:" << endl;
-    cout << "Total " << haplos.size() << " haplotypes generated" << endl;
-    for (Haplotype* ht : haplos) {
-        cout << ht->get_haplo() << endl;
+    if (!output_flag) {
+        cout << "Resolvation Results:" << endl;
+        cout << "Total " << haplos.size() << " haplotypes generated" << endl;
+        for (Haplotype* ht : haplos) {
+            cout << ht->get_haplo() << endl;
+        }
+    }
+    else {
+        output_stream << "Resolvation Results:" << endl;
+        output_stream << "Total " << haplos.size() << " haplotypes generated" << endl;
+        for (Haplotype* ht : haplos) {
+            output_stream << ht->get_haplo() << endl;
+        }
     }
 }
 

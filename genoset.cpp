@@ -7,7 +7,6 @@
 //
 
 #include "genoset.h"
-#define SF_TIME 10
 
 size_t Genoset::get_genos_len() {
     return genos.size();

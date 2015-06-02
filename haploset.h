@@ -12,10 +12,14 @@
 #include <iostream>
 #include "haplotype.h"
 #include <unordered_map>
+#include <fstream>
 #include <vector>
 
 #define SF_TIME 2000
 using namespace std;
+
+extern bool output_flag;
+extern ofstream output_stream;
 
 class Haploset {
     unordered_map<string,Haplotype*> haplo_set;
