@@ -80,15 +80,18 @@ void clark_algorithm(Haploset * hs, Genoset * gs) {
 void read_input_cin(Genoset * gs) {
     unsigned int num_genotypes;
     string s;
+    cout << ">>>Please input genotypes number followed by genotypes" << endl;
+    cout << ">>>";
     cin >> num_genotypes;
     while (num_genotypes -- > 0) {
+        cout << ">>>";
         cin >> s;
         gs->add_geno(s);
     }
 }
 
 void read_input_file(Genoset * gs) {
-    ifstream is(filename, 'r');
+    ifstream is(filename);
     string line = "";
     getline(is, line);
     unsigned long num_genotypes = stoul(line.c_str());
@@ -117,6 +120,7 @@ void print_help() {
 bool getoptions(int argc, char * const argv[]) {
     int c;
     while ((c = getopt(argc, argv, "hr:dso:c:")) != -1) {
+        if (optarg[0] == '-') c = '?';
         switch(c) {
             case 'h':
                 print_help();
@@ -130,6 +134,7 @@ bool getoptions(int argc, char * const argv[]) {
             case 'r':
                 file_flag = true;
                 filename = optarg;
+                cout << filename << endl;
                 break;
             case 'o':
                 output_flag = true;
@@ -139,6 +144,7 @@ bool getoptions(int argc, char * const argv[]) {
             case 'c':
                 consensus_flag = true;
                 concensus_times = atoi(optarg);
+                stochastic_flag = true;
                 break;
             case '?':
                 if (optopt == 'o' || optopt == 'c' || optopt == 'r') {
