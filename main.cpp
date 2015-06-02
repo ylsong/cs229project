@@ -24,6 +24,7 @@ unsigned long concensus_times = 0;
 bool stochastic_flag = false;
 bool output_flag = false;
 char * output_filename = NULL;
+bool max_plus_one_flag = false;
 ofstream output_stream;
 
 
@@ -114,13 +115,14 @@ void print_help() {
     cout << "-s            : Set program to stochasic to get different results" << endl;
     cout << "-o filename   : Output results to a file instead of cout" << endl;
     cout << "-c times      : Turn on consensus mode and specify how many times" << endl;
+    cout << "-p            : Turn on max+1 mode for consensus method" << endl;
     cout << "-h            : Print help page" << endl;
 }
 
 bool getoptions(int argc, char * const argv[]) {
     int c;
-    while ((c = getopt(argc, argv, "hr:dso:c:")) != -1) {
-        if (optarg[0] == '-') c = '?';
+    while ((c = getopt(argc, argv, "hr:dso:c:p")) != -1) {
+        if (optarg != NULL && optarg[0] == '-') c = '?';
         switch(c) {
             case 'h':
                 print_help();
@@ -146,6 +148,15 @@ bool getoptions(int argc, char * const argv[]) {
                 concensus_times = atoi(optarg);
                 stochastic_flag = true;
                 break;
+            case 'p':
+                if (!consensus_flag) {
+                    fprintf(stderr, "Option -p should be used together with -c\n");
+                    print_help();
+                    return false;
+                } else {
+                    max_plus_one_flag = true;
+                    break;
+                }
             case '?':
                 if (optopt == 'o' || optopt == 'c' || optopt == 'r') {
                     fprintf(stderr, "Option -%c requires an argument.\n", optopt);
@@ -157,7 +168,8 @@ bool getoptions(int argc, char * const argv[]) {
                 print_help();
                 return false;
             default:
-                abort();
+                print_help();
+                return false;
         }
     }
     return true;
