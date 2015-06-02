@@ -108,7 +108,7 @@ void read_input_file(Genoset * gs) {
 }
 
 void print_help() {
-    cout << "Usages: ./hi [ -r filename] [-d] [-s] [-o filename] [-c times]" << endl;
+    cout << "Usages: ./hi [ -r filename] [-d] [-s] [-o filename] [-c times -p]" << endl;
     cout << "Supported options:" << endl;
     cout << "-r filename   : Read file instead of directly from cin" << endl;
     cout << "-d            : Print resolvation map information" << endl;
