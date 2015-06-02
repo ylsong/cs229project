@@ -37,3 +37,7 @@ void Genoset::print() {
         gt->print();
     }
 }
+
+void Genoset::delete_genos() {
+    for (Genotype * gt : genos) delete gt;
+}

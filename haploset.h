@@ -30,5 +30,6 @@ public:
     Haplotype * get_haplos_at(size_t i);
     void print();
     void shuffle();
+    void delete_haplos();
 };
 #endif /* defined(__cs229project__haploset__) */

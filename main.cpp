@@ -136,7 +136,6 @@ bool getoptions(int argc, char * const argv[]) {
             case 'r':
                 file_flag = true;
                 filename = optarg;
-                cout << filename << endl;
                 break;
             case 'o':
                 output_flag = true;
@@ -186,5 +185,7 @@ int main(int argc, char * const argv[]) {
     if (file_flag) read_input_file(gs);
     else read_input_cin(gs);
     clark_algorithm(hs, gs);
+    gs->delete_genos();
+    hs->delete_haplos();
     return 0;
 }

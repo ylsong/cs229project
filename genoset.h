@@ -22,5 +22,6 @@ public:
     void shuffle();
     void add_geno(string s);
     void print();
+    void delete_genos();
 };
 #endif /* defined(__cs229project__genoset__) */

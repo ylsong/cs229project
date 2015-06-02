@@ -56,3 +56,7 @@ void Haploset::shuffle() {
         swap(haplos[a], haplos[b]);
     }
 }
+
+void Haploset::delete_haplos() {
+    for (Haplotype * ht : haplos) delete ht;
+}
