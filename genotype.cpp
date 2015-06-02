@@ -65,8 +65,21 @@ void Genotype::resolve(Haplotype * ht, Haploset * hs) {
 }
 
 void Genotype::print() {
-    cout << geno << "  :  " << resolved_by[0]->get_haplo()
+    if (resolved_by[0] == NULL) {
+        cout << geno << "  :  NOT RESOLVED" << endl; 
+    } else {
+        cout << geno << "  :  " << resolved_by[0]->get_haplo()
          << "+" << resolved_by[1]->get_haplo() << endl;
+    }
+    
 }
 
+void Genotype::set_resolved_by(Haplotype * ht1, Haplotype * ht2) {
+    resolved_by[0] = ht1;
+    resolved_by[1] = ht2;
+}
+
+void Genotype::set_resolved(bool b) {
+    resolved = b;
+}
 

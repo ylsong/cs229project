@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <vector>
 
+#define SF_TIME 2000
 using namespace std;
 
 class Haploset {
@@ -24,5 +25,6 @@ public:
     size_t get_haplos_len();
     Haplotype * get_haplos_at(size_t i);
     void print();
+    void shuffle();
 };
 #endif /* defined(__cs229project__haploset__) */

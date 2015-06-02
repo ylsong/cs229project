@@ -28,8 +28,10 @@ public:
     size_t get_geno_len();
     unsigned int get_num_ambiguous_sites();
     bool get_resolved();
+    void set_resolved(bool b);
     bool is_same_unambiguous_sites(Haplotype* ht);
     void resolve(Haplotype * ht, Haploset * hs);
+    void set_resolved_by(Haplotype * ht1, Haplotype * ht2);
     void print();
 };
 #endif /* defined(__cs229project__genotype__) */

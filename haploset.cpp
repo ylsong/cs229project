@@ -7,11 +7,14 @@
 //
 
 #include "haploset.h"
+#include <assert.h>
 
 Haplotype* Haploset::haploset_pushback(Haplotype * ht) {
     if (haplo_set.find(ht->get_haplo()) != haplo_set.end()) {
+        Haplotype * res = haplo_set[ht->get_haplo()];
+        assert(res != NULL);
         delete ht;
-        return haplo_set[ht->get_haplo()];
+        return res;
     } else {
         haplo_set.insert(make_pair(ht->get_haplo(), ht));
         haplos.push_back(ht);
@@ -29,7 +32,18 @@ size_t Haploset::get_haplos_len() {
 
 void Haploset::print() {
     cout << "Resolvation Results:" << endl;
+    cout << "Total " << haplos.size() << " haplotypes generated" << endl;
     for (Haplotype* ht : haplos) {
         cout << ht->get_haplo() << endl;
+    }
+}
+
+void Haploset::shuffle() {
+    size_t len = haplos.size();
+    if (len < 2) return;
+    for (unsigned int i = 0; i < SF_TIME; i ++) {
+        unsigned int a = rand() % len;
+        unsigned int b = rand() % len;
+        swap(haplos[a], haplos[b]);
     }
 }

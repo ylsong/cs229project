@@ -7,17 +7,22 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include "haploset.h"
 #include "haplotype.h"
 #include "genotype.h"
 #include "genoset.h"
+#include <assert.h>
 
 void clark_algorithm(Haploset * hs, Genoset * gs) {
     for (size_t i = 0; i < gs->get_genos_len(); i ++) {
         Genotype * gt = gs->get_genos_at(i);
         if (gt->get_num_ambiguous_sites() == 0) {
             Haplotype * new_haplotype = new Haplotype(gt->get_geno());
-            hs->haploset_pushback(new_haplotype);
+            assert(new_haplotype != NULL);
+            new_haplotype = hs->haploset_pushback(new_haplotype);
+            gt->set_resolved(true);
+            gt->set_resolved_by(new_haplotype, new_haplotype);
         } else if (gt->get_num_ambiguous_sites() == 1) {
             string new_haplo1 = gt->get_geno();
             string new_haplo2 = gt->get_geno();
@@ -30,8 +35,10 @@ void clark_algorithm(Haploset * hs, Genoset * gs) {
             }
             Haplotype * new_haplotype1 = new Haplotype(new_haplo1);
             Haplotype * new_haplotype2 = new Haplotype(new_haplo2);
-            hs->haploset_pushback(new_haplotype1);
-            hs->haploset_pushback(new_haplotype2);
+            new_haplotype1 = hs->haploset_pushback(new_haplotype1);
+            new_haplotype2 = hs->haploset_pushback(new_haplotype2);
+            gt->set_resolved(true);
+            gt->set_resolved_by(new_haplotype1, new_haplotype2);
         }
     }
     gs->shuffle();
@@ -50,7 +57,8 @@ void clark_algorithm(Haploset * hs, Genoset * gs) {
                 }
             }
         }
-        //gs->shuffle();
+        gs->shuffle();
+        hs->shuffle();
     }
     hs->print();
     gs->print();
@@ -67,8 +75,11 @@ void read_input(Genoset * gs) {
 }
 
 int main(int argc, const char * argv[]) {
+    //ifstream arq(getenv("INPUT"));
+    //cin.rdbuf(arq.rdbuf());
     Genoset * gs = new Genoset;
     Haploset * hs = new Haploset;
+    srand((unsigned int)time(NULL));
     read_input(gs);
     clark_algorithm(hs, gs);
     return 0;
