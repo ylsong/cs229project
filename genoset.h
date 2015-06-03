@@ -35,6 +35,7 @@ public:
     void add_geno(string s);
     void print();
     void delete_genos();
+    void sort_genos();
 };
 
 #endif

@@ -8,6 +8,11 @@
 
 #include "genoset.h"
 
+// sort genotypes according to index
+bool genoset_sort(Genotype * a, Genotype * b) {
+    return a->get_index() < b->get_index();
+}
+
 Genoset::Genoset() {
     resolved_genotypes = 0;
     distinct_haplotypes = 0;
@@ -48,7 +53,7 @@ void Genoset::shuffle() {
 }
 
 void Genoset::add_geno(string s) {
-    Genotype * new_genotype = new Genotype(s);
+    Genotype * new_genotype = new Genotype(s, genos.size());
     genos.push_back(new_genotype);
 }
 
@@ -61,4 +66,8 @@ void Genoset::print() {
 
 void Genoset::delete_genos() {
     for (Genotype * gt : genos) delete gt;
+}
+
+void Genoset::sort_genos() {
+    sort(genos.begin(), genos.end(), genoset_sort);
 }

@@ -27,17 +27,21 @@ class Genotype {
     unsigned int num_ambiguous_sites;
     bool resolved;
     Haplotype * resolved_by[2];
+    unsigned long index;
 public:
-    Genotype(string s);
+    Genotype(string s, unsigned long index);
     string get_geno();
     char get_geno_at(size_t i);
     size_t get_geno_len();
     unsigned int get_num_ambiguous_sites();
+    unsigned long get_index();
     bool get_resolved();
     void set_resolved(bool b);
     bool is_same_unambiguous_sites(Haplotype* ht);
     void resolve(Haplotype * ht, Haploset * hs, Genoset * gs);
     void set_resolved_by(Haplotype * ht1, Haplotype * ht2);
+    Haplotype * get_resolved_by1();
+    Haplotype * get_resolved_by2();
     void print();
 };
 

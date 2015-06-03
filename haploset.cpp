@@ -14,10 +14,17 @@ Haplotype* Haploset::haploset_pushback(Haplotype * ht) {
         Haplotype * res = haplo_set[ht->get_haplo()];
         assert(res != NULL);
         delete ht;
+        if (us.find(res) == us.end()) {
+            us.insert(res);
+            haplos.push_back(res);
+        }
         return res;
     } else {
         haplo_set.insert(make_pair(ht->get_haplo(), ht));
-        haplos.push_back(ht);
+        if (us.find(ht) == us.end()) {
+            us.insert(ht);
+            haplos.push_back(ht);
+        }
         return ht;
     }
 }
@@ -55,6 +62,7 @@ void Haploset::shuffle() {
         unsigned int b = rand() % len;
         swap(haplos[a], haplos[b]);
     }
+    //cout << "shuffled" << endl;
 }
 
 void Haploset::delete_haplos() {

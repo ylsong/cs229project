@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <fstream>
 #include <vector>
+#include <unordered_set>
 
 #define SF_TIME 2000
 using namespace std;
@@ -24,6 +25,7 @@ extern unordered_map<string, Haplotype *> haplo_set;
 
 class Haploset {
     vector<Haplotype*> haplos;
+    unordered_set<Haplotype*> us;
 public:
     Haplotype* haploset_pushback(Haplotype * ht);
     size_t get_haplos_len();

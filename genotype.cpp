@@ -10,7 +10,7 @@
 
 
 
-Genotype::Genotype(string s) {
+Genotype::Genotype(string s, unsigned long i) {
     geno = s;
     num_ambiguous_sites = 0;
     for (char c : s) {
@@ -19,6 +19,7 @@ Genotype::Genotype(string s) {
     resolved = false;
     resolved_by[0] = NULL;
     resolved_by[1] = NULL;
+    index = i;
 }
 
 string Genotype::get_geno() {
@@ -93,5 +94,17 @@ void Genotype::set_resolved_by(Haplotype * ht1, Haplotype * ht2) {
 
 void Genotype::set_resolved(bool b) {
     resolved = b;
+}
+
+unsigned long Genotype::get_index() {
+    return index;
+}
+
+Haplotype * Genotype::get_resolved_by1() {
+    return resolved_by[0];
+}
+
+Haplotype * Genotype::get_resolved_by2() {
+    return resolved_by[1];
 }
 

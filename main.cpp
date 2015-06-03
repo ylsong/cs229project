@@ -15,20 +15,23 @@
 #include <assert.h>
 #include <getopt.h>
 #include <unordered_map>
+#include <unordered_set>
 
 /* Argument options */
 bool file_flag = false;
 char * filename = NULL;
 bool print_detail_flag = false;
 bool consensus_flag = false;
-unsigned long concensus_times = 0;
+unsigned long consensus_times = 1;
 bool stochastic_flag = false;
 bool output_flag = false;
 char * output_filename = NULL;
-bool max_plus_one_flag = false;
+bool min_plus_one_flag = false;
 ofstream output_stream;
 
 unordered_map<string,Haplotype*> haplo_set;
+vector<Genoset *> consensus_vector;
+vector<Genoset *> selected_genosets;
 
 void clark_algorithm(Haploset * hs, Genoset * gs) {
     for (size_t i = 0; i < gs->get_genos_len(); i ++) {
@@ -81,10 +84,14 @@ void clark_algorithm(Haploset * hs, Genoset * gs) {
         if (stochastic_flag) gs->shuffle();
         if (stochastic_flag) hs->shuffle();
     }
-    hs->print();
-    cout << "Total " << gs->get_resolved_genotypes() << " have been resolved" << endl;
-    if (print_detail_flag) gs->print();
     gs->set_distinct_haplotypes(hs->get_haplos_len());
+    gs->sort_genos();
+    if (!consensus_flag) {
+        hs->print();
+        cout << "Total " << gs->get_resolved_genotypes() << " have been resolved" << endl;
+        if (print_detail_flag) gs->print();
+    }
+    
 }
 
 void read_input_cin(Genoset * gs) {
@@ -154,7 +161,7 @@ bool getoptions(int argc, char * const argv[]) {
                 break;
             case 'c':
                 consensus_flag = true;
-                concensus_times = atoi(optarg);
+                consensus_times = atoi(optarg);
                 stochastic_flag = true;
                 break;
             case 'p':
@@ -163,7 +170,7 @@ bool getoptions(int argc, char * const argv[]) {
                     print_help();
                     return false;
                 } else {
-                    max_plus_one_flag = true;
+                    min_plus_one_flag = true;
                     break;
                 }
             case '?':
@@ -184,18 +191,115 @@ bool getoptions(int argc, char * const argv[]) {
     return true;
 }
 
+void consensus_method() {
+    // Find smallest set of haplotypes
+    unsigned long mini = -1;
+    unsigned long mini2 = -1;
+    unordered_set<string> us;
+    for (Genoset * gs : consensus_vector) mini = min(mini, gs->get_distinct_haplotypes());
+    if (min_plus_one_flag) {
+        for (Genoset * gs : consensus_vector) {
+            if (gs->get_distinct_haplotypes() != mini) mini2 = min(mini2, gs->get_distinct_haplotypes());
+        }
+    }
+    if (mini2 == -1) mini2 = mini;
+    for (Genoset * gs : consensus_vector) {
+        if (gs->get_distinct_haplotypes() == mini
+            || gs->get_distinct_haplotypes() == mini2)
+            selected_genosets.push_back(gs);
+    }
+    unsigned long max_imply_num = 0;
+    Haplotype * max_haplotype1 = NULL;
+    Haplotype * max_haplotype2 = NULL;
+    string output_string = "";
+    for (size_t i = 0; i < selected_genosets[0]->get_genos_len(); i ++) {
+        max_imply_num = 0;
+        max_haplotype1 = NULL;
+        max_haplotype2 = NULL;
+        Genotype * gt = selected_genosets[0]->get_genos_at(i);
+        unordered_map<Haplotype*, unsigned int> haplotype_map;
+        for (size_t j = 0; j < selected_genosets.size(); j ++) {
+            Genotype * gt = selected_genosets[j]->get_genos_at(i);
+            if (gt->get_resolved_by1() == NULL) continue;
+            if (haplotype_map.find(gt->get_resolved_by1()) == haplotype_map.end()) {
+                haplotype_map[gt->get_resolved_by1()] = 1;
+                haplotype_map[gt->get_resolved_by2()] = 1;
+            } else {
+                haplotype_map[gt->get_resolved_by1()] ++;
+                haplotype_map[gt->get_resolved_by2()] ++;
+            }
+            if (max_imply_num < haplotype_map[gt->get_resolved_by2()]) {
+                max_haplotype1 = gt->get_resolved_by1();
+                max_haplotype2 = gt->get_resolved_by2();
+            }
+        }
+        if (max_haplotype1 != NULL) {
+            us.insert(max_haplotype1->get_haplo());
+            us.insert(max_haplotype2->get_haplo());
+        }
+        if (max_haplotype1 == NULL) {
+            output_string += gt->get_geno() + "  :  NOT RESOLVED\n";
+        } else {
+            output_string += gt->get_geno() + "  :  " + max_haplotype1->get_haplo()
+            + "+" + max_haplotype2->get_haplo() + "\n";
+        }
+    }
+    if (!output_flag) {
+        cout << "Resolvation Results:" << endl;
+        cout << "Total " << us.size() << " haplotypes generated" << endl;
+        for (string s : us) {
+            cout << s << endl;
+        }
+        cout << "Total " << selected_genosets[0]->get_resolved_genotypes()
+             << " have been resolved" << endl;
+    }
+    else {
+        output_stream << "Resolvation Results:" << endl;
+        output_stream << "Total " << us.size() << " haplotypes generated" << endl;
+        for (string s : us) {
+            output_stream << s << endl;
+        }
+        output_stream << "Total " << selected_genosets[0]->get_resolved_genotypes()
+        << " have been resolved" << endl;
+    }
+    if (print_detail_flag) {
+        if (!output_flag) {
+            cout << "Resolvation Map:" << endl;
+            cout << output_string;
+        }
+        else {
+            output_stream << "Resolvation Map:" << endl;
+            output_stream << output_string;
+        }
+    }
+}
+
 int main(int argc, char * const argv[]) {
     //ifstream arq(getenv("INPUT"));
     //cin.rdbuf(arq.rdbuf());
     bool if_run = getoptions(argc, argv);
     if (!if_run) return 0;
-    Genoset * gs = new Genoset;
-    Haploset * hs = new Haploset;
+    Genoset * gs = NULL;
+    Haploset * hs = NULL;
     srand((unsigned int)time(NULL));
-    if (file_flag) read_input_file(gs);
-    else read_input_cin(gs);
-    clark_algorithm(hs, gs);
-    gs->delete_genos();
-    hs->delete_haplos();
+    for (int i = 0; i < consensus_times; i ++) {
+        gs = new Genoset;
+        hs = new Haploset;
+        if (file_flag) read_input_file(gs);
+        else read_input_cin(gs);
+        clark_algorithm(hs, gs);
+        consensus_vector.push_back(gs);
+        delete hs;
+    }
+    if (consensus_flag) consensus_method();
+    // Delete all genotypes and genosets
+    for (Genoset * gs : consensus_vector) {
+        gs->delete_genos();
+        delete gs;
+    }
+    // Delete all haplotypes
+    for (auto kv : haplo_set) {
+        delete kv.second;
+    }
     return 0;
 }
