@@ -20,9 +20,9 @@ using namespace std;
 
 extern bool output_flag;
 extern ofstream output_stream;
+extern unordered_map<string, Haplotype *> haplo_set;
 
 class Haploset {
-    unordered_map<string,Haplotype*> haplo_set;
     vector<Haplotype*> haplos;
 public:
     Haplotype* haploset_pushback(Haplotype * ht);

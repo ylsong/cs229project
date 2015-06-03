@@ -8,6 +8,27 @@
 
 #include "genoset.h"
 
+Genoset::Genoset() {
+    resolved_genotypes = 0;
+    distinct_haplotypes = 0;
+}
+
+unsigned int Genoset::get_resolved_genotypes() {
+    return resolved_genotypes;
+}
+
+void Genoset::incre_resolved_genotypes() {
+    resolved_genotypes ++;
+}
+
+void Genoset::set_distinct_haplotypes(unsigned long ui) {
+    distinct_haplotypes = ui;
+}
+
+unsigned long Genoset::get_distinct_haplotypes() {
+    return distinct_haplotypes;
+}
+
 size_t Genoset::get_genos_len() {
     return genos.size();
 }

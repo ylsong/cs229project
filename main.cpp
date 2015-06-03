@@ -14,6 +14,7 @@
 #include "genoset.h"
 #include <assert.h>
 #include <getopt.h>
+#include <unordered_map>
 
 /* Argument options */
 bool file_flag = false;
@@ -27,6 +28,7 @@ char * output_filename = NULL;
 bool max_plus_one_flag = false;
 ofstream output_stream;
 
+unordered_map<string,Haplotype*> haplo_set;
 
 void clark_algorithm(Haploset * hs, Genoset * gs) {
     for (size_t i = 0; i < gs->get_genos_len(); i ++) {
@@ -37,6 +39,8 @@ void clark_algorithm(Haploset * hs, Genoset * gs) {
             new_haplotype = hs->haploset_pushback(new_haplotype);
             gt->set_resolved(true);
             gt->set_resolved_by(new_haplotype, new_haplotype);
+            gs->incre_resolved_genotypes();
+            //cout << gt->get_geno() << " is generating " << gt->get_geno() << endl;
         } else if (gt->get_num_ambiguous_sites() == 1) {
             string new_haplo1 = gt->get_geno();
             string new_haplo2 = gt->get_geno();
@@ -53,9 +57,12 @@ void clark_algorithm(Haploset * hs, Genoset * gs) {
             new_haplotype2 = hs->haploset_pushback(new_haplotype2);
             gt->set_resolved(true);
             gt->set_resolved_by(new_haplotype1, new_haplotype2);
+            gs->incre_resolved_genotypes();
+            //cout << gt->get_geno() << " is generating " << new_haplo1 << " and " << new_haplo2 << endl;
         }
     }
     if (stochastic_flag) gs->shuffle();
+    if (stochastic_flag) hs->shuffle();
     bool changed = true;
     while (changed) {
         changed = false;
@@ -65,7 +72,7 @@ void clark_algorithm(Haploset * hs, Genoset * gs) {
             for (size_t j = 0; j < hs->get_haplos_len(); j ++) {
                 Haplotype * ht = hs->get_haplos_at(j);
                 if (gt->is_same_unambiguous_sites(ht)) {
-                    gt->resolve(ht, hs);
+                    gt->resolve(ht, hs, gs);
                     changed = true;
                     break;
                 }
@@ -75,7 +82,9 @@ void clark_algorithm(Haploset * hs, Genoset * gs) {
         if (stochastic_flag) hs->shuffle();
     }
     hs->print();
+    cout << "Total " << gs->get_resolved_genotypes() << " have been resolved" << endl;
     if (print_detail_flag) gs->print();
+    gs->set_distinct_haplotypes(hs->get_haplos_len());
 }
 
 void read_input_cin(Genoset * gs) {
@@ -98,6 +107,7 @@ void read_input_file(Genoset * gs) {
     unsigned long num_genotypes = stoul(line.c_str());
     while (num_genotypes -- > 0) {
         getline(is, line);
+        line.erase(remove(line.begin(), line.end(), ' '), line.end());
         if (line == "") {
             cerr << "Read File Error" << endl;
             abort();

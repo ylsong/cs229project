@@ -9,12 +9,18 @@
 #ifndef __cs229project__genotype__
 #define __cs229project__genotype__
 
+#ifndef genotype_h
+#define genotype_h
+
 #include <iostream>
 #include <string>
 #include "haplotype.h"
 #include "haploset.h"
+#include "genoset.h"
 
 using namespace std;
+
+class Genoset;
 
 class Genotype {
     string geno;
@@ -30,8 +36,10 @@ public:
     bool get_resolved();
     void set_resolved(bool b);
     bool is_same_unambiguous_sites(Haplotype* ht);
-    void resolve(Haplotype * ht, Haploset * hs);
+    void resolve(Haplotype * ht, Haploset * hs, Genoset * gs);
     void set_resolved_by(Haplotype * ht1, Haplotype * ht2);
     void print();
 };
+
+#endif
 #endif /* defined(__cs229project__genotype__) */

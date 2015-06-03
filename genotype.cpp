@@ -51,7 +51,7 @@ bool Genotype::is_same_unambiguous_sites(Haplotype * ht) {
     return true;
 }
 
-void Genotype::resolve(Haplotype * ht, Haploset * hs) {
+void Genotype::resolve(Haplotype * ht, Haploset * hs, Genoset * gs) {
     string new_haplo = geno;
     for (size_t i = 0; i < geno.size(); i ++) {
         if (geno[i] == '2') {
@@ -62,6 +62,8 @@ void Genotype::resolve(Haplotype * ht, Haploset * hs) {
     resolved_by[0] = hs->haploset_pushback(new_haplotype);
     resolved_by[1] = ht;
     resolved = true;
+    gs->incre_resolved_genotypes();
+    //cout << geno << " is resolved by " <<ht->get_haplo() << " and generating " << new_haplo << endl;
 }
 
 void Genotype::print() {

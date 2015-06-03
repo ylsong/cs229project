@@ -10,7 +10,7 @@
 #include <assert.h>
 
 Haplotype* Haploset::haploset_pushback(Haplotype * ht) {
-    if (haplo_set.find(ht->get_haplo()) != haplo_set.end()) {
+    if (haplo_set.count(ht->get_haplo()) != 0) {
         Haplotype * res = haplo_set[ht->get_haplo()];
         assert(res != NULL);
         delete ht;
