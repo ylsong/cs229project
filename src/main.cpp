@@ -157,7 +157,7 @@ bool getoptions(int argc, char * const argv[]) {
             case 'o':
                 output_flag = true;
                 output_filename = optarg;
-                output_stream.open(output_filename,'r');
+                output_stream.open(output_filename);
                 break;
             case 'c':
                 consensus_flag = true;
